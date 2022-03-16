@@ -5,6 +5,7 @@ using UnityEngine;
 public class FrogAutonomy : MonoBehaviour
 {
     private FrogMovementController controller;
+    private Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +18,10 @@ public class FrogAutonomy : MonoBehaviour
     void Awake()
     {
         controller = gameObject.GetComponent<FrogMovementController>();
+        this.animator = GetComponent<Animator>();
+        
         Debug.Log(controller);
+        StartCoroutine(MoveForward(1.0f));
     }
 
     // Update is called once per frame
@@ -36,30 +40,62 @@ public class FrogAutonomy : MonoBehaviour
 
     private void MoveCompleted()
     {
-        
+        //yield return new WaitForSeconds(1.0f);
+        int action = Random.Range(0, 3);
+        switch (action)
+        {
+            case 0:
+                StartCoroutine(MoveForward(1.0f));
+                break;
+            case 1:
+                StartCoroutine(MoveLeft(Random.Range(0.5f, 2.5f)));
+                break;
+            case 2:
+                StartCoroutine(MoveRight(Random.Range(0.5f, 2.5f)));
+                break;
+        }
     }
 
-    private void MoveForward()
+    IEnumerator MoveForward(float time)
     {
         this.controller.ForwardInput = 1.0f;
-        Debug.Log("starting");
-        //StartCoroutine(Wait(3.0f));
-        this.controller.ForwardInput = 0.0f;
-        Debug.Log("Stopping");
-    }
+        this.animator.SetTrigger("Jump");
 
-    private void MoveLeft()
-    {
-
-    }
-
-    private void MoveRight()
-    {
-
-    }
-
-    IEnumerator Wait(float time)
-    {
         yield return new WaitForSeconds(time);
+
+        this.controller.ForwardInput = 0.0f;
+        this.animator.SetTrigger("Idle");
+
+        this.MoveCompleted();
+    }
+
+    IEnumerator MoveLeft(float time)
+    {
+        yield return new WaitForSeconds(Random.Range(0.4f, 1.7f));
+
+        this.controller.TurnInput = -1.0f;
+        this.animator.SetTrigger("Crawl");
+
+        yield return new WaitForSeconds(time);
+
+        this.controller.TurnInput = 0.0f;
+        this.animator.SetTrigger("Idle");
+
+        this.MoveCompleted();
+    }
+
+    IEnumerator MoveRight(float time)
+    {
+        yield return new WaitForSeconds(Random.Range(0.4f, 1.7f));
+
+        this.controller.TurnInput = 1.0f;
+        this.animator.SetTrigger("Crawl");
+
+        yield return new WaitForSeconds(time);
+
+        this.controller.TurnInput = 0.0f;
+        this.animator.SetTrigger("Idle");
+
+        this.MoveCompleted();
     }
 }
