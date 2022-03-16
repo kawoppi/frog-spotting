@@ -19,7 +19,6 @@ public class FrogAutonomy : MonoBehaviour
     {
         controller = gameObject.GetComponent<FrogMovementController>();
         this.animator = GetComponent<Animator>();
-        Debug.Log(controller);
         StartCoroutine(MoveForward(1.0f));
     }
 

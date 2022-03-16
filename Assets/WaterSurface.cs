@@ -18,9 +18,10 @@ public class WaterSurface : MonoBehaviour
         
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collider)
     {
-        Debug.Log(collision);
-        this.particles.Play();
+        ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
+        emitParams.position = collider.transform.position;
+        this.particles.Emit(emitParams, 1);
     }
 }
