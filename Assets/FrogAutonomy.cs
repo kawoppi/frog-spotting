@@ -4,64 +4,65 @@ using UnityEngine;
 
 public class FrogAutonomy : MonoBehaviour
 {
+    public AudioClip[] ribbitSounds;
+    public float minTurnTime = 0.5f;
+    public float maxTurnTime = 2.5f;
+    public float minIdleTime = 0.5f;
+    public float maxIdleTime = 1.5f;
+    public float minCooldown = 0.4f;
+    public float maxCooldown = 1.7f;
+
     private FrogMovementController controller;
     private Animator animator;
+    private AudioSource audioSource;
+    private float jumpDuration;
 
-    // Start is called before the first frame update
     void Start()
-    {
-        //this.controller = GetComponent<FrogMovementController>();
-        //this.MoveCompleted();
-        //this.MoveForward();
-    }
-
-    void Awake()
     {
         controller = gameObject.GetComponent<FrogMovementController>();
         this.animator = GetComponent<Animator>();
+        this.audioSource = GetComponent<AudioSource>();
         StartCoroutine(MoveForward(1.0f));
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        /*
-        int vertical = Mathf.RoundToInt(Input.GetAxis("Vertical"));
-        int horizontal = Mathf.RoundToInt(Input.GetAxis("Horizontal"));
-        bool jump = Input.GetButtonDown("Jump");
-
-        this.controller.ForwardInput = vertical;
-        this.controller.TurnInput = horizontal;
-        this.controller.JumpInput = jump;
-        */
+        //get the duration of the jump animation
+        AnimationClip[] clips = this.animator.runtimeAnimatorController.animationClips;
+        foreach(AnimationClip clip in clips)
+        {
+            if (clip.name == "Jump")
+            {
+                this.jumpDuration = clip.length;
+            }
+        }
     }
 
     private void MoveCompleted()
     {
-        //yield return new WaitForSeconds(1.0f);
-        int action = Random.Range(0, 3);
+        int action = Random.Range(0, 4);
         switch (action)
         {
             case 0:
-                StartCoroutine(MoveForward(1.0f));
+                StartCoroutine(MoveForward(this.jumpDuration));
                 break;
             case 1:
-                StartCoroutine(MoveLeft(Random.Range(0.5f, 2.5f)));
+                StartCoroutine(MoveLeft(Random.Range(this.minTurnTime, this.maxTurnTime)));
                 break;
             case 2:
-                StartCoroutine(MoveRight(Random.Range(0.5f, 2.5f)));
+                StartCoroutine(MoveRight(Random.Range(this.minTurnTime, this.maxTurnTime)));
+                break;
+            case 3:
+                StartCoroutine(Idle(Random.Range(this.minIdleTime, this.maxIdleTime)));
                 break;
         }
     }
 
     IEnumerator MoveForward(float time)
     {
-        this.controller.ForwardInput = 1.0f;
+        this.animator.applyRootMotion = true;
         this.animator.SetTrigger("Jump");
 
         yield return new WaitForSeconds(time);
 
-        this.controller.ForwardInput = 0.0f;
+        this.animator.applyRootMotion = false;
         this.animator.SetTrigger("Idle");
 
         this.MoveCompleted();
@@ -69,7 +70,7 @@ public class FrogAutonomy : MonoBehaviour
 
     IEnumerator MoveLeft(float time)
     {
-        yield return new WaitForSeconds(Random.Range(0.4f, 1.7f));
+        yield return new WaitForSeconds(Random.Range(this.minCooldown, this.maxCooldown));
 
         this.controller.TurnInput = -1.0f;
         this.animator.SetTrigger("Crawl");
@@ -84,7 +85,7 @@ public class FrogAutonomy : MonoBehaviour
 
     IEnumerator MoveRight(float time)
     {
-        yield return new WaitForSeconds(Random.Range(0.4f, 1.7f));
+        yield return new WaitForSeconds(Random.Range(this.minCooldown, this.maxCooldown));
 
         this.controller.TurnInput = 1.0f;
         this.animator.SetTrigger("Crawl");
@@ -93,6 +94,15 @@ public class FrogAutonomy : MonoBehaviour
 
         this.controller.TurnInput = 0.0f;
         this.animator.SetTrigger("Idle");
+
+        this.MoveCompleted();
+    }
+
+    IEnumerator Idle(float time)
+    {
+        this.audioSource.PlayOneShot(this.ribbitSounds[Random.Range(0, this.ribbitSounds.Length)]);
+
+        yield return new WaitForSeconds(time);
 
         this.MoveCompleted();
     }
