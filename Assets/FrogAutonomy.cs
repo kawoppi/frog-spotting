@@ -17,6 +17,9 @@ public class FrogAutonomy : MonoBehaviour
     public readonly float maxCooldown = 1.7f;
     private readonly float jumpDuration = 1.5f; //slightly longer than the jump animation
 
+    //material to recolor
+    public Material recolorMaterial;
+
     private FrogMovementController controller;
     private Animator animator;
     private AudioSource audioSource;
@@ -34,6 +37,19 @@ public class FrogAutonomy : MonoBehaviour
         Throwable throwable = GetComponent<Throwable>();
         throwable.onPickUp.AddListener(this.OnGrabbed);
         throwable.onDetachFromHand.AddListener(this.OnReleased);
+
+        //randomize color
+        if (recolorMaterial != null)
+        {
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            foreach (Renderer renderer in renderers)
+            {
+                if (renderer.material == this.recolorMaterial)
+                {
+                    renderer.material.color = Random.ColorHSV(0.5f, 1.0f, 0.5f, 1.0f, 0.5f, 1.0f);
+                }
+            }
+        }
 
         //start with a jump as the first movement
         StartCoroutine(MoveForward(this.jumpDuration));
