@@ -115,13 +115,11 @@ public class FrogAutonomy : MonoBehaviour
         StopAllCoroutines();
         this.controller.TurnInput = 0.0f;
         this.animator.applyRootMotion = false;
-        this.frogBody.freezeRotation = false;
         this.animator.SetTrigger("Crawl");
     }
 
     private void OnReleased()
     {
-        this.frogBody.freezeRotation = true;
         this.animator.SetTrigger("Idle");
         StartCoroutine(Idle(Random.Range(this.minIdleTime, this.maxIdleTime)));
     }
