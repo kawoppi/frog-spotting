@@ -9,12 +9,12 @@ public class FrogAutonomy : MonoBehaviour
     public AudioClip[] ribbitSounds;
 
     //movement timings
-    public readonly float minTurnTime = 0.5f;
-    public readonly float maxTurnTime = 2.5f;
-    public readonly float minIdleTime = 0.5f;
-    public readonly float maxIdleTime = 1.5f;
-    public readonly float minCooldown = 0.4f;
-    public readonly float maxCooldown = 1.7f;
+    public float minTurnTime = 0.5f;
+    public float maxTurnTime = 2.5f;
+    public float minIdleTime = 0.5f;
+    public float maxIdleTime = 1.5f;
+    public float minCooldown = 0.4f;
+    public float maxCooldown = 1.7f;
     private readonly float jumpDuration = 1.5f; //slightly longer than the jump animation
 
     //material to recolor
@@ -23,7 +23,6 @@ public class FrogAutonomy : MonoBehaviour
     private FrogMovementController controller;
     private Animator animator;
     private AudioSource audioSource;
-    private Rigidbody frogBody;
 
     void Start()
     {
@@ -31,7 +30,6 @@ public class FrogAutonomy : MonoBehaviour
         controller = gameObject.GetComponent<FrogMovementController>();
         this.animator = GetComponent<Animator>();
         this.audioSource = GetComponent<AudioSource>();
-        this.frogBody = GetComponent<Rigidbody>();
 
         //set up throwable events
         Throwable throwable = GetComponent<Throwable>();
@@ -40,13 +38,14 @@ public class FrogAutonomy : MonoBehaviour
 
         //randomize color
         if (recolorMaterial != null)
-        {
+        {   
+            Color color = Random.ColorHSV(0.5f, 1.0f, 0.5f, 1.0f, 0.5f, 1.0f); //randomly pick a new for color
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
-            foreach (Renderer renderer in renderers)
+            foreach (Renderer renderer in renderers) //apply it to every match with the recolor material
             {
-                if (renderer.material == this.recolorMaterial)
+                if (renderer.sharedMaterial == this.recolorMaterial)
                 {
-                    renderer.material.color = Random.ColorHSV(0.5f, 1.0f, 0.5f, 1.0f, 0.5f, 1.0f);
+                    renderer.material.color = color;
                 }
             }
         }
@@ -132,11 +131,13 @@ public class FrogAutonomy : MonoBehaviour
         this.controller.TurnInput = 0.0f;
         this.animator.applyRootMotion = false;
         this.animator.SetTrigger("Crawl");
+        this.animator.speed = 3.0f;
     }
 
     private void OnReleased()
     {
         this.animator.SetTrigger("Idle");
+        this.animator.speed = 1.0f;
         StartCoroutine(Idle(Random.Range(this.minIdleTime, this.maxIdleTime)));
     }
 }
