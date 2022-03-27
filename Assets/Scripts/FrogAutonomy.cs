@@ -39,7 +39,7 @@ public class FrogAutonomy : MonoBehaviour
         //randomize color
         if (recolorMaterial != null)
         {   
-            Color color = Random.ColorHSV(0.5f, 1.0f, 0.5f, 1.0f, 0.5f, 1.0f); //randomly pick a new for color
+            Color color = Random.ColorHSV(0.0f, 0.5f, 0.25f, 0.75f, 0.25f, 0.5f); //randomly pick a new for color
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
             foreach (Renderer renderer in renderers) //apply it to every match with the recolor material
             {
