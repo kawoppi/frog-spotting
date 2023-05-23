@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
@@ -34,36 +34,36 @@ public class FrogAutonomy : MonoBehaviour
         throwable.onDetachFromHand.AddListener(this.OnReleased);
 
         //start with a jump as the first movement
-        StartCoroutine(MoveForward(this.jumpDuration));
+        StartCoroutine(MoveForward());
     }
 
     private void MoveCompleted()
     {
-        //pick a random move and do a coroutine to execute it
+        //pick a random action and do a coroutine to execute it
         int action = Random.Range(0, 4);
         switch (action)
         {
             case 0:
-                StartCoroutine(MoveForward(this.jumpDuration));
+                StartCoroutine(MoveForward());
                 break;
             case 1:
-                StartCoroutine(MoveLeft(Random.Range(this.minTurnTime, this.maxTurnTime)));
+                StartCoroutine(MoveLeft());
                 break;
             case 2:
-                StartCoroutine(MoveRight(Random.Range(this.minTurnTime, this.maxTurnTime)));
+                StartCoroutine(MoveRight());
                 break;
             case 3:
-                StartCoroutine(Idle(Random.Range(this.minIdleTime, this.maxIdleTime)));
+                StartCoroutine(Idle());
                 break;
         }
     }
 
-    IEnumerator MoveForward(float time)
+    IEnumerator MoveForward()
     {
         this.animator.applyRootMotion = true;
         this.animator.SetTrigger("Jump");
 
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(this.jumpDuration);
 
         this.animator.applyRootMotion = false;
         this.animator.SetTrigger("Idle");
@@ -71,14 +71,14 @@ public class FrogAutonomy : MonoBehaviour
         this.MoveCompleted();
     }
 
-    IEnumerator MoveLeft(float time)
+    IEnumerator MoveLeft()
     {
         yield return new WaitForSeconds(Random.Range(this.minCooldown, this.maxCooldown));
 
         this.controller.TurnInput = -1.0f;
         this.animator.SetTrigger("Crawl");
 
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(Random.Range(this.minTurnTime, this.maxTurnTime));
 
         this.controller.TurnInput = 0.0f;
         this.animator.SetTrigger("Idle");
@@ -86,14 +86,14 @@ public class FrogAutonomy : MonoBehaviour
         this.MoveCompleted();
     }
 
-    IEnumerator MoveRight(float time)
+    IEnumerator MoveRight()
     {
         yield return new WaitForSeconds(Random.Range(this.minCooldown, this.maxCooldown));
 
         this.controller.TurnInput = 1.0f;
         this.animator.SetTrigger("Crawl");
 
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(Random.Range(this.minTurnTime, this.maxTurnTime));
 
         this.controller.TurnInput = 0.0f;
         this.animator.SetTrigger("Idle");
@@ -101,10 +101,10 @@ public class FrogAutonomy : MonoBehaviour
         this.MoveCompleted();
     }
 
-    IEnumerator Idle(float time)
+    IEnumerator Idle()
     {
         this.audioSource.PlayOneShot(this.ribbitSounds[Random.Range(0, this.ribbitSounds.Length)]); //play random ribbit sound
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(Random.Range(this.minIdleTime, this.maxIdleTime));
         this.MoveCompleted();
     }
 
@@ -121,6 +121,6 @@ public class FrogAutonomy : MonoBehaviour
     {
         this.animator.SetTrigger("Idle");
         this.animator.speed = 1.0f;
-        StartCoroutine(Idle(Random.Range(this.minIdleTime, this.maxIdleTime)));
+        StartCoroutine(Idle());
     }
 }
