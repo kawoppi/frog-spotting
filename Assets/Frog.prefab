@@ -1114,6 +1114,7 @@ GameObject:
   - component: {fileID: 6056310745367998415}
   - component: {fileID: 6056310745367998414}
   - component: {fileID: 6056310745367998413}
+  - component: {fileID: 7463680938692542494}
   - component: {fileID: -8757955963113149543}
   - component: {fileID: -444739603466303374}
   - component: {fileID: -9204852255526693710}
@@ -1212,7 +1213,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4e38c7aa4c032684fb10bb98cc6f8efa, type: 3}
   - {fileID: 8300000, guid: ec9aa73c6588ae44e81814402b98a774, type: 3}
   - {fileID: 8300000, guid: 127e0c20946a67d4392414f9b587e246, type: 3}
-  recolorMaterial: {fileID: 2100000, guid: 079136e397ada3e4d92b656d8f6a33cf, type: 2}
+  minTurnTime: 0.5
+  maxTurnTime: 2.5
+  minIdleTime: 0.5
+  maxIdleTime: 1.5
+  minCooldown: 0.4
+  maxCooldown: 1.7
 --- !u!114 &6056310745367998413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1225,11 +1231,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15840de496a89474c825471c20a6d4b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slopeLimit: 45
   moveSpeed: 1
   turnSpeed: 50
-  allowJump: 0
-  jumpSpeed: 4
+--- !u!114 &7463680938692542494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6056310745367998412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ce81b5372b02f46bc4097bcc8bc227, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recolorMaterial: {fileID: 2100000, guid: 079136e397ada3e4d92b656d8f6a33cf, type: 2}
+  minHue: 0
+  maxHue: 0.5
+  minSaturation: 0.25
+  maxSaturation: 0.75
+  minValue: 0.25
+  maxValue: 0.5
 --- !u!82 &-8757955963113149543
 AudioSource:
   m_ObjectHideFlags: 0
