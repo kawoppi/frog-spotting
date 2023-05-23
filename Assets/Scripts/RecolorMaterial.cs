@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RecolorMaterial : MonoBehaviour
@@ -18,7 +16,7 @@ public class RecolorMaterial : MonoBehaviour
         //randomize color
         if (recolorMaterial != null)
         {
-            Color color = Random.ColorHSV(minHue, maxHue, minSaturation, maxSaturation, minValue, maxValue); //randomly pick a new for color
+            Color color = Random.ColorHSV(minHue, maxHue, minSaturation, maxSaturation, minValue, maxValue); //randomly pick a new color
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
             foreach (Renderer renderer in renderers) //apply it to every match with the recolor material
             {
