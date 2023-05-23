@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
@@ -21,10 +21,13 @@ public class FrogAutonomy : MonoBehaviour
     private Animator animator;
     private AudioSource audioSource;
 
+    private delegate IEnumerator FrogAction();
+    private FrogAction[] randomActions;
+
     void Start()
     {
         //set up attributes
-        controller = gameObject.GetComponent<FrogMovementController>();
+        this.controller = gameObject.GetComponent<FrogMovementController>();
         this.animator = GetComponent<Animator>();
         this.audioSource = GetComponent<AudioSource>();
 
@@ -33,6 +36,10 @@ public class FrogAutonomy : MonoBehaviour
         throwable.onPickUp.AddListener(this.OnGrabbed);
         throwable.onDetachFromHand.AddListener(this.OnReleased);
 
+        //set list of coroutines to pick from for random frog movement
+        FrogAction[] tempActions = { MoveForward, MoveLeft, MoveRight, Idle};
+        this.randomActions = tempActions;
+
         //start with a jump as the first movement
         StartCoroutine(MoveForward());
     }
@@ -40,22 +47,8 @@ public class FrogAutonomy : MonoBehaviour
     private void MoveCompleted()
     {
         //pick a random action and do a coroutine to execute it
-        int action = Random.Range(0, 4);
-        switch (action)
-        {
-            case 0:
-                StartCoroutine(MoveForward());
-                break;
-            case 1:
-                StartCoroutine(MoveLeft());
-                break;
-            case 2:
-                StartCoroutine(MoveRight());
-                break;
-            case 3:
-                StartCoroutine(Idle());
-                break;
-        }
+        int action = Random.Range(0, this.randomActions.Length);
+        StartCoroutine(this.randomActions[action]());
     }
 
     IEnumerator MoveForward()
