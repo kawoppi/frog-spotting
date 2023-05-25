@@ -5,22 +5,18 @@ using Valve.VR.InteractionSystem;
 
 public class FrogAutonomy : MonoBehaviour
 {
-	[SerializeField]
-	private BoundingArea frighteningRange;
-	[SerializeField]
-	private float frightenedJumpAngle = 10.0f; //frightened frogs keep turning until they're within frightenedJumpAngle from the opposite direction
-	[SerializeField]
-	private float frightenedSpeed = 2.0f;
-	[SerializeField]
-	private AudioClip[] ribbitSounds; //random sound is picked for ribbiting
+	[SerializeField] private BoundingArea frighteningRange;
+	[SerializeField] private float frightenedJumpAngle = 10.0f; //frightened frogs keep turning until they're within frightenedJumpAngle from the opposite direction
+	[SerializeField] private float frightenedSpeed = 2.0f;
+	[SerializeField] private AudioClip[] ribbitSounds; //random sound is picked for ribbiting
 
 	//movement timings
-	public float minTurnTime = 0.5f;
-	public float maxTurnTime = 2.5f;
-	public float minIdleTime = 0.5f;
-	public float maxIdleTime = 1.5f;
-	public float minCooldown = 0.4f;
-	public float maxCooldown = 1.7f;
+	[SerializeField] private float minTurnTime = 0.5f;
+	[SerializeField] private float maxTurnTime = 2.5f;
+	[SerializeField] private float minIdleTime = 0.5f;
+	[SerializeField] private float maxIdleTime = 1.5f;
+	[SerializeField] private float minCooldown = 0.4f;
+	[SerializeField] private float maxCooldown = 1.7f;
 	private readonly float jumpDuration = 1.5f; //slightly longer than the jump animation
 
 	private FrogMovementController controller;
@@ -68,7 +64,22 @@ public class FrogAutonomy : MonoBehaviour
 		}
 	}
 
-	private void MoveCompleted()
+	private void StartRandomActions()
+	{
+		this.controller.TurnInput = 0.0f;
+		this.animator.applyRootMotion = false;
+		//StartCoroutine(Idle());
+		DoRandomAction();
+	}
+
+	private void StopRandomActions()
+	{
+		StopAllCoroutines();
+		this.controller.TurnInput = 0.0f;
+		this.animator.applyRootMotion = false;
+	}
+
+	private void DoRandomAction()
 	{
 		//pick a random action and do a coroutine to execute it
 		int action = Random.Range(0, this.randomActions.Length);
@@ -85,7 +96,7 @@ public class FrogAutonomy : MonoBehaviour
 		this.animator.applyRootMotion = false;
 		this.animator.SetTrigger("Idle");
 
-		this.MoveCompleted();
+		this.DoRandomAction();
 	}
 
 	IEnumerator MoveLeft()
@@ -100,7 +111,7 @@ public class FrogAutonomy : MonoBehaviour
 		this.controller.TurnInput = 0.0f;
 		this.animator.SetTrigger("Idle");
 
-		this.MoveCompleted();
+		this.DoRandomAction();
 	}
 
 	IEnumerator MoveRight()
@@ -115,7 +126,7 @@ public class FrogAutonomy : MonoBehaviour
 		this.controller.TurnInput = 0.0f;
 		this.animator.SetTrigger("Idle");
 
-		this.MoveCompleted();
+		this.DoRandomAction();
 	}
 
 	IEnumerator Idle()
@@ -123,7 +134,7 @@ public class FrogAutonomy : MonoBehaviour
 		this.animator.SetTrigger("Idle");
 		this.audioSource.PlayOneShot(this.ribbitSounds[Random.Range(0, this.ribbitSounds.Length)]); //play random ribbit sound
 		yield return new WaitForSeconds(Random.Range(this.minIdleTime, this.maxIdleTime));
-		this.MoveCompleted();
+		this.DoRandomAction();
 	}
 
 	/// <summary>
@@ -202,20 +213,6 @@ public class FrogAutonomy : MonoBehaviour
 				this.StartRandomActions();
 			}
 		}
-	}
-
-	private void StartRandomActions()
-	{
-		this.controller.TurnInput = 0.0f;
-		this.animator.applyRootMotion = false;
-		StartCoroutine(Idle());
-	}
-
-	private void StopRandomActions()
-	{
-		StopAllCoroutines();
-		this.controller.TurnInput = 0.0f;
-		this.animator.applyRootMotion = false;
 	}
 
 	private void OnGrabbed()

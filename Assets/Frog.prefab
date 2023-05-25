@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 735965582994178726}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children: []
   m_Father: {fileID: 6059921193480693288}
   m_RootOrder: 9
@@ -1320,6 +1320,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   frighteningRange: {fileID: 8764349442105493509}
+  frightenedJumpAngle: 10
+  frightenedSpeed: 2
   ribbitSounds:
   - {fileID: 8300000, guid: 4e38c7aa4c032684fb10bb98cc6f8efa, type: 3}
   - {fileID: 8300000, guid: ec9aa73c6588ae44e81814402b98a774, type: 3}
