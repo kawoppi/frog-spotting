@@ -10,6 +10,8 @@ public class FrogAutonomy : MonoBehaviour
 	[SerializeField]
 	private float frightenedJumpAngle = 10.0f; //frightened frogs keep turning until they're within frightenedJumpAngle from the opposite direction
 	[SerializeField]
+	private float frightenedSpeed = 2.0f;
+	[SerializeField]
 	private AudioClip[] ribbitSounds; //random sound is picked for ribbiting
 
 	//movement timings
@@ -156,19 +158,22 @@ public class FrogAutonomy : MonoBehaviour
 
 		if (difference > 0 + this.frightenedJumpAngle) //turn right
 		{
-			this.controller.TurnInput = 1.0f;
+			this.controller.TurnInput = this.frightenedSpeed;
+			this.animator.speed = this.frightenedSpeed;
 			this.animator.applyRootMotion = false;
 			this.animator.SetTrigger("Crawl");
 		}
 		else if (difference < 0 - this.frightenedJumpAngle) //turn left
 		{
-			this.controller.TurnInput = -1.0f;
+			this.controller.TurnInput = -this.frightenedSpeed;
+			this.animator.speed = this.frightenedSpeed;
 			this.animator.applyRootMotion = false;
 			this.animator.SetTrigger("Crawl");
 		}
 		else //jump away
 		{
 			this.controller.TurnInput = 0.0f;
+			this.animator.speed = 1.0f;
 			this.animator.applyRootMotion = true;
 			this.animator.SetTrigger("Jump");
 		}
@@ -183,7 +188,6 @@ public class FrogAutonomy : MonoBehaviour
 				this.StopRandomActions();
 			}
 			this.frighteners.Add(frightener);
-			Debug.Log("entered");//
 		}
 	}
 
@@ -197,7 +201,6 @@ public class FrogAutonomy : MonoBehaviour
 				this.animator.ResetTrigger("Jump"); //in case it happened mid-jump
 				this.StartRandomActions();
 			}
-			Debug.Log("left");//
 		}
 	}
 

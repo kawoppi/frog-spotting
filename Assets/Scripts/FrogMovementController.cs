@@ -24,12 +24,12 @@ public class FrogMovementController : MonoBehaviour
 		//turning
 		if (TurnInput != 0f)
 		{
-			float angle = Mathf.Clamp(TurnInput, -1f, 1f) * turnSpeed;
+			float angle = TurnInput * turnSpeed;
 			transform.Rotate(Vector3.up, Time.fixedDeltaTime * angle);
 		}
 
 		//moving
-		Vector3 move = transform.forward * Mathf.Clamp(ForwardInput, -1f, 1f) * moveSpeed * Time.fixedDeltaTime;
+		Vector3 move = transform.forward * ForwardInput * moveSpeed * Time.fixedDeltaTime;
 		this.frogRigidbody.MovePosition(transform.position + move);
 	}
 
