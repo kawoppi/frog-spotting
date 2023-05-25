@@ -131,7 +131,23 @@ public class FrogAutonomy : MonoBehaviour
 			return;
 		}
 		
-		GameObject nearestFrightener = this.frighteners[0]; //TODO get nearest
+		//find nearest frightener to run away from
+		GameObject nearestFrightener = this.frighteners[0];
+		if (this.frighteners.Count > 1)
+		{
+			float minDistance = Mathf.Infinity;
+			foreach (GameObject frightener in this.frighteners)
+			{
+				float distance = Vector3.Distance(transform.position, frightener.transform.position);
+				if (distance < minDistance)
+				{
+					minDistance = distance;
+					nearestFrightener = frightener;
+				}
+			}
+		}
+
+		//find out which angle is needed to face away from the frightener
 		Quaternion desiredRotation = Quaternion.LookRotation(transform.position - nearestFrightener.transform.position);
 		float difference = Mathf.DeltaAngle(transform.eulerAngles.y, desiredRotation.eulerAngles.y);
 
