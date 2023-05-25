@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class FrogDispenser : MonoBehaviour
 {
-    public GameObject toDispense;
+	public GameObject toDispense;
 
-    public void DispenseFrog()
-    {
-        GameObject dispensed = Instantiate(toDispense);
-        dispensed.transform.position = this.transform.position;
-    }
+	public void DispenseFrog()
+	{
+		GameObject dispensed = Instantiate(toDispense);
+		dispensed.transform.position = this.transform.position;
+	}
 }
