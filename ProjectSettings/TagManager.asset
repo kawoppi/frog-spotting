@@ -8,6 +8,7 @@ TagManager:
   - projectile
   - FxTemporaire
   - WaterSurface
+  - FrogFrightener
   layers:
   - Default
   - TransparentFX

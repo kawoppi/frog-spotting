@@ -26,12 +26,22 @@ public class FrogAutonomy : MonoBehaviour
     private delegate IEnumerator FrogAction();
     private FrogAction[] randomActions;
 
+    private List<GameObject> frighteners; //only those inside of the bounding box
+
     void Start()
     {
         //set up attributes
         this.controller = gameObject.GetComponent<FrogMovementController>();
         this.animator = GetComponent<Animator>();
         this.audioSource = GetComponent<AudioSource>();
+
+        //set up bounding area callbacks
+        if (this.frighteningRange != null)
+		{
+            this.frighteningRange.enterCallbacks.Add(this.FrightenerEntered);
+            this.frighteningRange.exitCallbacks.Add(this.FrightenerExited);
+		}
+        this.frighteners = new List<GameObject>();
 
         //set up throwable events
         Throwable throwable = GetComponent<Throwable>();
@@ -101,6 +111,24 @@ public class FrogAutonomy : MonoBehaviour
         this.audioSource.PlayOneShot(this.ribbitSounds[Random.Range(0, this.ribbitSounds.Length)]); //play random ribbit sound
         yield return new WaitForSeconds(Random.Range(this.minIdleTime, this.maxIdleTime));
         this.MoveCompleted();
+    }
+
+    private void FrightenerEntered(GameObject frightener)
+	{
+        if (frightener.tag == "FrogFrightener")
+		{
+            this.frighteners.Add(frightener);
+            Debug.Log("entered");
+        }
+	}
+
+    private void FrightenerExited(GameObject frightener)
+	{
+        if (this.frighteners.Contains(frightener))
+		{
+            this.frighteners.Remove(frightener);
+            Debug.Log("left");
+        }
     }
 
     private void OnGrabbed()

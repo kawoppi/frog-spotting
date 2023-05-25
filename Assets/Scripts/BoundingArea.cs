@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
- * 
+ * BoundingArea lets you receive trigger events with this GameObject on a script inside of a different GameObject.
+ * Callbacks must be added during or after Start(), because the lists for them are initialized in Awake().
  */
 public class BoundingArea : MonoBehaviour
 {
-	//frogautonomy requires a bounding area and sets up the callbacks
-
 	public bool showIngame = false;
 
 	public delegate void BoundingCallback(GameObject gameObject);
