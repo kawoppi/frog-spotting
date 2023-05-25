@@ -68,8 +68,7 @@ public class FrogAutonomy : MonoBehaviour
 	{
 		this.controller.TurnInput = 0.0f;
 		this.animator.applyRootMotion = false;
-		//StartCoroutine(Idle());
-		DoRandomAction();
+		StartCoroutine(Idle());
 	}
 
 	private void StopRandomActions()
@@ -225,6 +224,7 @@ public class FrogAutonomy : MonoBehaviour
 
 	private void OnReleased()
 	{
+		transform.eulerAngles = new Vector3(0.0f, transform.eulerAngles.y, 0.0f);
 		this.grabbed = false;
 		this.animator.SetTrigger("Idle");
 		this.animator.speed = 1.0f;
