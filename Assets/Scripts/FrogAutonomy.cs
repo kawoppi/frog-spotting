@@ -175,7 +175,8 @@ public class FrogAutonomy : MonoBehaviour
 			this.frighteners.Remove(frightener);
 			if (this.frighteners.Count == 0)
 			{
-				this.StartRandomActions(); //TODO fix jump ending as soon as it leaves the area
+				this.animator.ResetTrigger("Jump"); //in case it happened mid-jump
+				this.StartRandomActions();
 			}
 			Debug.Log("left");//
 		}
