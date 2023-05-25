@@ -5,8 +5,10 @@ using Valve.VR.InteractionSystem;
 
 public class FrogAutonomy : MonoBehaviour
 {
-    //random sound is picked for ribbiting
-    public AudioClip[] ribbitSounds;
+    [SerializeField]
+    BoundingArea frighteningRange;
+    [SerializeField]
+    private AudioClip[] ribbitSounds; //random sound is picked for ribbiting
 
     //movement timings
     public float minTurnTime = 0.5f;
