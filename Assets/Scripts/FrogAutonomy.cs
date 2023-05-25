@@ -29,6 +29,7 @@ public class FrogAutonomy : MonoBehaviour
 	private FrogAction[] randomActions;
 
 	private List<GameObject> frighteners; //only those inside of the bounding box
+	private bool grabbed = false;
 
 	void Start()
 	{
@@ -55,6 +56,14 @@ public class FrogAutonomy : MonoBehaviour
 		this.randomActions = tempActions;
 
 		this.StartRandomActions();
+	}
+
+	void FixedUpdate()
+	{
+		if (!grabbed)
+		{
+			TryRunAway();
+		}
 	}
 
 	private void MoveCompleted()
@@ -113,12 +122,6 @@ public class FrogAutonomy : MonoBehaviour
 		this.audioSource.PlayOneShot(this.ribbitSounds[Random.Range(0, this.ribbitSounds.Length)]); //play random ribbit sound
 		yield return new WaitForSeconds(Random.Range(this.minIdleTime, this.maxIdleTime));
 		this.MoveCompleted();
-	}
-
-	void FixedUpdate()
-	{
-		//TODO account for being grabbed
-		TryRunAway();
 	}
 
 	/// <summary>
@@ -214,6 +217,7 @@ public class FrogAutonomy : MonoBehaviour
 
 	private void OnGrabbed()
 	{
+		this.grabbed = true;
 		this.StopRandomActions();
 		this.animator.SetTrigger("Crawl");
 		this.animator.speed = 3.0f;
@@ -221,6 +225,7 @@ public class FrogAutonomy : MonoBehaviour
 
 	private void OnReleased()
 	{
+		this.grabbed = false;
 		this.animator.SetTrigger("Idle");
 		this.animator.speed = 1.0f;
 		StartCoroutine(Idle());
