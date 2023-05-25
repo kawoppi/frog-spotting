@@ -1,12 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/**
- * BoundingArea lets you receive trigger events with this GameObject on a script inside of a different GameObject.
- * Callbacks must be added during or after Start(), because the lists for them are initialized in Awake().
- */
+/// <summary>
+/// BoundingArea lets you receive trigger events with this GameObject on a script inside of a different GameObject.
+/// Callbacks must be added during or after Start(), because the lists for them are initialized in Awake().
+/// </summary>
 public class BoundingArea : MonoBehaviour
 {
 	public bool showIngame = false;

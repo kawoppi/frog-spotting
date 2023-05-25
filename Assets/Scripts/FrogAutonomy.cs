@@ -6,7 +6,9 @@ using Valve.VR.InteractionSystem;
 public class FrogAutonomy : MonoBehaviour
 {
 	[SerializeField]
-	BoundingArea frighteningRange;
+	private BoundingArea frighteningRange;
+	[SerializeField]
+	private float frightenedJumpAngle = 10.0f; //frightened frogs keep turning until they're within frightenedJumpAngle from the opposite direction
 	[SerializeField]
 	private AudioClip[] ribbitSounds; //random sound is picked for ribbiting
 
@@ -52,8 +54,7 @@ public class FrogAutonomy : MonoBehaviour
 		FrogAction[] tempActions = { MoveForward, MoveLeft, MoveRight, Idle };
 		this.randomActions = tempActions;
 
-		//start with a jump as the first movement
-		StartCoroutine(MoveForward());
+		this.StartRandomActions();
 	}
 
 	private void MoveCompleted()
@@ -108,38 +109,49 @@ public class FrogAutonomy : MonoBehaviour
 
 	IEnumerator Idle()
 	{
+		this.animator.SetTrigger("Idle");
 		this.audioSource.PlayOneShot(this.ribbitSounds[Random.Range(0, this.ribbitSounds.Length)]); //play random ribbit sound
 		yield return new WaitForSeconds(Random.Range(this.minIdleTime, this.maxIdleTime));
 		this.MoveCompleted();
 	}
 
-	//TODO in update()
-	//check frightener count
-	//run away from nearest frightener
-
-	private void RunAway()
+	void FixedUpdate()
 	{
-		//run away from the closest frightener
-		//rotate to face away from object and then jump
-		GameObject nearestFrightener = this.frighteners[0];
+		//TODO account for being grabbed
+		TryRunAway();
+	}
+
+	/// <summary>
+	/// Makes the frog turn away from the nearest frightener and jump.
+	/// </summary>
+	private void TryRunAway()
+	{
+		if (this.frighteners.Count == 0)
+		{
+			return;
+		}
+		
+		GameObject nearestFrightener = this.frighteners[0]; //TODO get nearest
 		Quaternion desiredRotation = Quaternion.LookRotation(transform.position - nearestFrightener.transform.position);
 		float difference = Mathf.DeltaAngle(transform.eulerAngles.y, desiredRotation.eulerAngles.y);
-		float jumpAngle = 10.0f; //frog will keep turning until the difference is lower than the jump angle
-		Debug.Log("current: " + transform.eulerAngles.y + ", desired: " + desiredRotation.eulerAngles.y + ", difference: " + difference);//
 
-		if (difference > 0 + jumpAngle) //turn left
-		{
-			this.controller.TurnInput = -1.0f;
-			this.animator.SetTrigger("Crawl");
-		}
-		else if (difference < 0 - jumpAngle) //turn right
+		if (difference > 0 + this.frightenedJumpAngle) //turn right
 		{
 			this.controller.TurnInput = 1.0f;
+			this.animator.applyRootMotion = false;
+			this.animator.SetTrigger("Crawl");
+		}
+		else if (difference < 0 - this.frightenedJumpAngle) //turn left
+		{
+			this.controller.TurnInput = -1.0f;
+			this.animator.applyRootMotion = false;
 			this.animator.SetTrigger("Crawl");
 		}
 		else //jump away
 		{
-			
+			this.controller.TurnInput = 0.0f;
+			this.animator.applyRootMotion = true;
+			this.animator.SetTrigger("Jump");
 		}
 	}
 
@@ -147,6 +159,10 @@ public class FrogAutonomy : MonoBehaviour
 	{
 		if (frightener.tag == "FrogFrightener")
 		{
+			if (this.frighteners.Count == 0)
+			{
+				this.StopRandomActions();
+			}
 			this.frighteners.Add(frightener);
 			Debug.Log("entered");//
 		}
@@ -157,16 +173,31 @@ public class FrogAutonomy : MonoBehaviour
 		if (this.frighteners.Contains(frightener))
 		{
 			this.frighteners.Remove(frightener);
+			if (this.frighteners.Count == 0)
+			{
+				this.StartRandomActions(); //TODO fix jump ending as soon as it leaves the area
+			}
 			Debug.Log("left");//
-			//TODO go back to normal if no frighteners left
 		}
 	}
 
-	private void OnGrabbed()
+	private void StartRandomActions()
+	{
+		this.controller.TurnInput = 0.0f;
+		this.animator.applyRootMotion = false;
+		StartCoroutine(Idle());
+	}
+
+	private void StopRandomActions()
 	{
 		StopAllCoroutines();
 		this.controller.TurnInput = 0.0f;
 		this.animator.applyRootMotion = false;
+	}
+
+	private void OnGrabbed()
+	{
+		this.StopRandomActions();
 		this.animator.SetTrigger("Crawl");
 		this.animator.speed = 3.0f;
 	}
