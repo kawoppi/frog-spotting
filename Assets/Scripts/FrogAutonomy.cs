@@ -113,12 +113,42 @@ public class FrogAutonomy : MonoBehaviour
 		this.MoveCompleted();
 	}
 
+	//TODO in update()
+	//check frightener count
+	//run away from nearest frightener
+
+	private void RunAway()
+	{
+		//run away from the closest frightener
+		//rotate to face away from object and then jump
+		GameObject nearestFrightener = this.frighteners[0];
+		Quaternion desiredRotation = Quaternion.LookRotation(transform.position - nearestFrightener.transform.position);
+		float difference = Mathf.DeltaAngle(transform.eulerAngles.y, desiredRotation.eulerAngles.y);
+		float jumpAngle = 10.0f; //frog will keep turning until the difference is lower than the jump angle
+		Debug.Log("current: " + transform.eulerAngles.y + ", desired: " + desiredRotation.eulerAngles.y + ", difference: " + difference);//
+
+		if (difference > 0 + jumpAngle) //turn left
+		{
+			this.controller.TurnInput = -1.0f;
+			this.animator.SetTrigger("Crawl");
+		}
+		else if (difference < 0 - jumpAngle) //turn right
+		{
+			this.controller.TurnInput = 1.0f;
+			this.animator.SetTrigger("Crawl");
+		}
+		else //jump away
+		{
+			
+		}
+	}
+
 	private void FrightenerEntered(GameObject frightener)
 	{
 		if (frightener.tag == "FrogFrightener")
 		{
 			this.frighteners.Add(frightener);
-			Debug.Log("entered");
+			Debug.Log("entered");//
 		}
 	}
 
@@ -127,7 +157,8 @@ public class FrogAutonomy : MonoBehaviour
 		if (this.frighteners.Contains(frightener))
 		{
 			this.frighteners.Remove(frightener);
-			Debug.Log("left");
+			Debug.Log("left");//
+			//TODO go back to normal if no frighteners left
 		}
 	}
 
